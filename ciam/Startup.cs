@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using AutoMapper;
 using Ciam.DAL.EF;
-using Ciam.DAL.Entities;
 using Ciam.DAL.Interfaces;
 using Ciam.DAL.Repositories;
 using Microsoft.AspNetCore.Builder;
@@ -38,6 +34,8 @@ namespace ciam
             services.AddDbContext<ProjectDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddTransient<IUnitOfWork, UnitOfWork>();
+
+            services.AddAutoMapper();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
