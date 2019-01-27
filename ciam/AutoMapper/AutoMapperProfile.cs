@@ -12,6 +12,8 @@ namespace Ciam.AutoMapper
             CreateMap<SalesStatusViewModel, SalesStatus>();
             CreateMap<CustomerViewModel, Customer>();
             CreateMap<Customer, CustomerViewModel>();
+            CreateMap<ProductViewModel, Product>();
+            CreateMap<Product, ProductViewModel>();
         }
     }
 }

@@ -36,6 +36,8 @@
         <script src="~/lib/kendo-ui/js/kendo.all.min.js"></script>
         <script src="~/lib/kendo-ui/js/kendo.aspnetmvc.min.js"></script>
 
+        <script src="~/lib/kendo-ui/js/cultures/kendo.culture.ru-RU.min.js"></script>
+
         <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
         <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
 
@@ -109,6 +111,9 @@
             </div>
         </div>
     </div>
+    <script type="text/javascript">
+        kendo.culture("ru-RU");
+    </script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>

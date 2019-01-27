@@ -20,6 +20,10 @@
             $('#btn_add_customer').on('click', function () {
                 showModal520('@Url.Action("_AddOrEditPartial", "Customer", new {Area = ""})');
             });
+
+            $('#btn_add_product').on('click', function () {
+                showModal520('@Url.Action("_AddOrEditPartial", "Product", new {Area = ""})');
+            });
         });
 
         function showModal520(url) {
@@ -46,6 +50,7 @@
         <button type="button" class="btn btn-primary navbar-btn">Добавить заказ</button>
         <button id="btn_add_status" type="button" class="btn btn-default navbar-btn right-btn last-rigth-btn">Добавить статус</button>
         <button id="btn_add_customer" type="button" class="btn btn-default navbar-btn right-btn">Добавить клиента</button>
+        <button id="btn_add_product" type="button" class="btn btn-default navbar-btn right-btn">Добавить продукт</button>
     </div>
     <div class="row">
         <div class="col-md-12">

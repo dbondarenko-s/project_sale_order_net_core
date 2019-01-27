@@ -16,6 +16,7 @@ namespace Ciam.Models
         public decimal? ListPrice { get; set; }
 
         [Display(Name = "Комментарий")]
+        [MaxLength(2000, ErrorMessage = "Максимальная длина поля \"{0}\" равна {1} символов")]
         public string Comment { get; set; }
     }
 }
