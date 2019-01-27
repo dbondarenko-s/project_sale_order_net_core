@@ -19,8 +19,6 @@ namespace ciam.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var tmp = await _unitOfWork.SalesStatuses.GetAll().AsNoTracking().ToListAsync();
-
             return View();
         }
     }
