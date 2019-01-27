@@ -7,25 +7,35 @@
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="~/css/site.css" />
+
+        <link rel="stylesheet" href="~/lib/kendo-ui/styles/kendo.common-nova.min.css" />
+        <link rel="stylesheet" href="~/lib/kendo-ui/styles/kendo.nova.min.css" />
     </environment>
     <environment exclude="Development">
         <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
               asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+
+        <link rel="stylesheet"
+              href="https://kendo.cdn.telerik.com/2019.1.115/styles/kendo.common-nova.min.css"
+              asp-fallback-href="~/lib/kendo-ui/styles/kendo.common-nova.min.css"
+              asp-fallback-test-class="k-common-test-class"
+              asp-fallback-test-property="opacity" asp-fallback-test-value="0" />
+        <link rel="stylesheet"
+              href="https://kendo.cdn.telerik.com/2019.1.115/styles/kendo.nova.min.css"
+              asp-fallback-href="~/lib/kendo-ui/styles/kendo.nova.min.css"
+              asp-fallback-test-class="k-theme-test-class"
+              asp-fallback-test-property="opacity" asp-fallback-test-value="0" />
     </environment>
-</head>
-<body>
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>2019 - bondarenko ds</p>
-        </footer>
-    </div>
 
     <environment include="Development">
         <script src="~/lib/jquery/dist/jquery.js"></script>
+
+        @* Place Kendo UI scripts after jQuery *@
+        <script src="~/lib/kendo-ui/js/kendo.all.min.js"></script>
+        <script src="~/lib/kendo-ui/js/kendo.aspnetmvc.min.js"></script>
+
         <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
     </environment>
@@ -36,6 +46,9 @@
                 crossorigin="anonymous"
                 integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT">
         </script>
+
+        <script src="~/bundle.js"></script>
+
         <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"
                 asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
                 asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
@@ -44,6 +57,15 @@
         </script>
         <script src="~/js/site.min.js" asp-append-version="true"></script>
     </environment>
+</head>
+<body>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>2019 - bondarenko ds</p>
+        </footer>
+    </div>
 
     @RenderSection("Scripts", required: false)
 </body>
