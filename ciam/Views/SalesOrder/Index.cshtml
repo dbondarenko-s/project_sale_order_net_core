@@ -14,9 +14,18 @@
             });
 
             $('#btn_add_status').on('click', function () {
-                $.ajax({
+                showModal520('@Url.Action("_AddOrEditPartial", "SalesStatus", new {Area = ""})');
+            });
+
+            $('#btn_add_customer').on('click', function () {
+                showModal520('@Url.Action("_AddOrEditPartial", "Customer", new {Area = ""})');
+            });
+        });
+
+        function showModal520(url) {
+            $.ajax({
                     type: "GET",
-                    url: '@Url.Action("_AddOrEditPartial", "SalesStatus", new {Area = ""})',
+                    url: url,
                     data: { },
                     success: function (data) {
                         modal.setHtmlData(data);
@@ -26,9 +35,8 @@
                         modal.hideDialog();
                         console.log(request);
                     }
-                });
-            });
-        });
+             });
+        }
     </script>
 }
 
@@ -37,7 +45,7 @@
     <div class="panel-button">
         <button type="button" class="btn btn-primary navbar-btn">Добавить заказ</button>
         <button id="btn_add_status" type="button" class="btn btn-default navbar-btn right-btn last-rigth-btn">Добавить статус</button>
-        <button type="button" class="btn btn-default navbar-btn right-btn">Добавить клиента</button>
+        <button id="btn_add_customer" type="button" class="btn btn-default navbar-btn right-btn">Добавить клиента</button>
     </div>
     <div class="row">
         <div class="col-md-12">

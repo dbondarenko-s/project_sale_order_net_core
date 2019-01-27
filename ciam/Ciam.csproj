@@ -15,4 +15,10 @@
     <ProjectReference Include="..\Ciam.DAL\Ciam.DAL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Views\Customer\_AddOrEditPartial.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+  </ItemGroup>
+
 </Project>
