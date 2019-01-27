@@ -1,0 +1,68 @@
+﻿@using Ciam.Models
+@{
+    ViewData["Title"] = "Список заказов";
+}
+
+@section Scripts
+{
+    <script type="text/javascript">
+        var modal;
+
+        $(document).ready(function () {
+            modal = new ModalDialog({
+                modalForm: $('#modal_520')
+            });
+
+            $('#btn_add_status').on('click', function () {
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("_AddOrEditPartial", "SalesStatus", new {Area = ""})',
+                    data: { },
+                    success: function (data) {
+                        modal.setHtmlData(data);
+                        modal.showDialog();
+                    },
+                    error: function (request) {
+                        modal.hideDialog();
+                        console.log(request);
+                    }
+                });
+            });
+        });
+    </script>
+}
+
+<div class="main-page">
+    <h1>@ViewData["Title"]</h1>
+    <div class="panel-button">
+        <button type="button" class="btn btn-primary navbar-btn">Добавить заказ</button>
+        <button id="btn_add_status" type="button" class="btn btn-default navbar-btn right-btn last-rigth-btn">Добавить статус</button>
+        <button type="button" class="btn btn-default navbar-btn right-btn">Добавить клиента</button>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            @(Html.Kendo().Grid<SalesOrderViewModel>()
+                                                  .Name("GridSalesOrder")
+                                                  .Columns(c =>
+                                                  {
+                                                      c.Bound(b => b.Id).Hidden();
+                                                      c.Bound(b => b.OrderDate).Format("{0:dd.MM.yyyy HH:mm}");
+                                                      c.Bound(b => b.SalesStatus.Name).Title("Статус заказа");
+                                                      c.Bound(b => b.Customer.Name).Title("Клиент");
+                                                      c.Bound(b => b.Comment);
+                                                  })
+                                                  .Pageable(pager => pager.Refresh(true).PageSizes(new int[] { 10, 15, 20 }))
+                                              .Sortable()
+                                              .Scrollable()
+                                              .HtmlAttributes(new { style = "height:550px;" })
+                                              .DataSource(ds => ds.Ajax()
+                                                .PageSize(15)
+                                                .Read(read => read.Action("GetData", "SalesOrder", new { area = "" }))
+                                                .Sort(sort => sort.Add(x => x.OrderDate).Descending())
+                                              )
+            )
+
+        </div>
+    </div>
+</div>
+

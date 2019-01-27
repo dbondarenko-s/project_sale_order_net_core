@@ -1,7 +1,6 @@
 /* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification 
 for details on configuring this project to bundle and minify static web assets. */
 body {
-    padding-top: 50px;
     padding-bottom: 20px;
 }
 
@@ -27,6 +26,40 @@ body {
 #qrCode {
     margin: 15px;
 }
+
+.main-page h1 {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid;
+    font-family: serif;
+    font-weight: 600;
+    font-size: 25px;
+}
+.main-page .panel-button .right-btn{
+    float: right;
+}
+.main-page .panel-button .navbar-btn{
+    margin-right: 5px;
+}
+.main-page .panel-button .last-rigth-btn{
+    margin-right:0;
+}
+
+.modal-window .modal-content{
+    border-radius: 0;
+}
+
+.modal-window .modal-content .modal-header {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    background-color: #e7e7e7;
+    color: #777;
+    font-family: serif;
+}
+
+    .modal-window .modal-content .modal-header button {
+        padding-top: 5px;
+    }
 
 /* Hide/rearrange for smaller screens */
 @media screen and (max-width: 767px) {

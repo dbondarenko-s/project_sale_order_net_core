@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Ciam.DAL.Entities;
+using Ciam.Models;
 
 namespace Ciam.AutoMapper
 {
@@ -6,7 +8,8 @@ namespace Ciam.AutoMapper
     {
         public AutoMapperProfile()
         {
-
+            CreateMap<SalesStatus, SalesStatusViewModel>();
+            CreateMap<SalesStatusViewModel, SalesStatus>();
         }
     }
 }

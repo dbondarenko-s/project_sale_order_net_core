@@ -40,7 +40,7 @@ namespace ciam
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                     .AddJsonOptions(options => options.SerializerSettings.ContractResolver = new DefaultContractResolver()); ;
-
+            
             services.AddKendo();
         }
 
@@ -63,7 +63,7 @@ namespace ciam
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Public}/{action=Index}/{id?}");
+                    template: "{controller=SalesOrder}/{action=Index}/{id?}");
             });
         }
     }
