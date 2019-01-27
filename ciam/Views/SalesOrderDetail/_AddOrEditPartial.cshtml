@@ -1,0 +1,100 @@
+﻿@using Ciam.Models
+@model Ciam.Models.SalesOrderDetailViewModel
+
+@{
+    ViewData["TitleModal"] = Model.Id == null ? "Добавить позицию" : "Редактировать позицию";
+}
+
+<script type="text/javascript">
+    $(function () {
+        $("#create_or_edit_position").submit(function (e) {
+            e.preventDefault();
+            $('span[data-valmsg-for="*"]').text("");
+            $.ajax({
+                type: 'POST',
+                url: $(this).attr("action"),
+                data: $(this).find("input,select").serialize(),
+                success: function (data) {
+                    if (data.status) {
+                        if ($('#GridSalesOrderDetail').data('kendoGrid')) {
+                            $('#GridSalesOrderDetail').data('kendoGrid').dataSource.page(1);
+                        }
+                        new ModalDialog({
+                            modalForm: $("#create_or_edit_position").closest('div.modal')
+                        }).hideDialog();
+                    } else {
+                        DisplayErrors("create_or_edit_position", data.errors);
+                    }
+                },
+                error: function (request) {
+                    console.log(request);
+                }
+            });
+        });
+    })
+
+    function onChangeProductId(e) {
+        let id = this.value();
+        $.ajax({
+            type: 'GET',
+            url: '@Url.Action("GetProductPrice", "Product", new { area = "" })',
+            data: { id: id },
+            success: function (data) {
+                if (data.status) {
+                    $('#UnitPrice').data('kendoNumericTextBox').value(data.price);
+                }
+            },
+            error: function (request) {
+                console.log(request);
+            }
+        });
+    }
+</script>
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title">@ViewData["TitleModal"]</h4>
+</div>
+<form id="create_or_edit_position" asp-action="CreateOrEdit" asp-controller="SalesOrderDetail" method="POST" data-ajax="true" class="form-horizontal">
+    <div class="modal-body">
+        <div data-valmsg-summary="false" class="text-danger validation-summary-errors">
+            <ul></ul>
+        </div>
+        @Html.HiddenFor(x => x.Id)
+        @Html.HiddenFor(x => x.SalesOrderId)
+        @Html.HiddenFor(x => x.ModifyDate)
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProductId, htmlAttributes: new { @class = "control-label col-md-5" })
+            <div id="product_id_container" class="col-md-7">
+                @(Html.Kendo().DropDownListFor(m => m.ProductId).Filter("contains")
+                                                                      .DataTextField("Name")
+                                                                      .DataValueField("Id")
+                                                                      .Popup(x => x.AppendTo("#product_id_container"))
+                                                                      .OptionLabel("Выберите продукт")
+                                                                      .NoDataTemplate("Нет данных")
+                                                                      .Events(x=>x.Change("onChangeProductId"))
+                                                                      .DataSource(source => source.Read(read => read.Action("GetProductList", "Product")))
+                                                                      .HtmlAttributes(new { style = "width:100%;" }))
+                @Html.ValidationMessageFor(model => model.ProductId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.UnitPrice, htmlAttributes: new { @class = "control-label col-md-8" })
+            <div class="col-md-4">
+                @(Html.Kendo().NumericTextBoxFor<decimal>(x => x.UnitPrice).Min(0).Decimals(5).RestrictDecimals(false).Round(false).HtmlAttributes(new { @class = "form-control", style = "width:100%;" }))
+                @Html.ValidationMessageFor(model => model.UnitPrice, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.OrderQty, htmlAttributes: new { @class = "control-label col-md-8" })
+            <div class="col-md-4">
+                @(Html.Kendo().IntegerTextBoxFor(x => x.OrderQty).Min(0).HtmlAttributes(new { @class = "form-control", style = "width:100%;" }))
+                @Html.ValidationMessageFor(model => model.OrderQty, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Отменить</button>
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+    </div>
+</form>

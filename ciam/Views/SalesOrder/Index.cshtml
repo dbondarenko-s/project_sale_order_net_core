@@ -7,10 +7,14 @@
 {
     <script type="text/javascript">
         var modal;
+        var modalHight;
 
         $(document).ready(function () {
             modal = new ModalDialog({
                 modalForm: $('#modal_520')
+            });
+            modalHight = new ModalDialog({
+                modalForm: $('#modal_780')
             });
 
             $('#btn_add_status').on('click', function () {
@@ -23,6 +27,10 @@
 
             $('#btn_add_product').on('click', function () {
                 showModal520('@Url.Action("_AddOrEditPartial", "Product", new {Area = ""})');
+            });
+
+            $('#btn_add_sales_order').on('click', function () {
+                document.location = '@Url.Action("Create","SalesOrder", new { area = ""})';
             });
         });
 
@@ -47,7 +55,7 @@
 <div class="main-page">
     <h1>@ViewData["Title"]</h1>
     <div class="panel-button">
-        <button type="button" class="btn btn-primary navbar-btn">Добавить заказ</button>
+        <button id="btn_add_sales_order" type="button" class="btn btn-primary navbar-btn">Добавить заказ</button>
         <button id="btn_add_status" type="button" class="btn btn-default navbar-btn right-btn last-rigth-btn">Добавить статус</button>
         <button id="btn_add_customer" type="button" class="btn btn-default navbar-btn right-btn">Добавить клиента</button>
         <button id="btn_add_product" type="button" class="btn btn-default navbar-btn right-btn">Добавить продукт</button>
@@ -63,6 +71,7 @@
                                                       c.Bound(b => b.SalesStatus.Name).Title("Статус заказа");
                                                       c.Bound(b => b.Customer.Name).Title("Клиент");
                                                       c.Bound(b => b.Comment);
+                                                      c.Bound(b => b.Id).ClientTemplate("<a href="+ Url.Action("Edit", "SalesOrder", new { area = "", id = "#=Id#" }) + ">Редактировать</a>").Sortable(false).Width(150).Title(" ");
                                                   })
                                                   .Pageable(pager => pager.Refresh(true).PageSizes(new int[] { 10, 15, 20 }))
                                               .Sortable()

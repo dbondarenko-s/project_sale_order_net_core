@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Ciam.DAL.Entities;
@@ -50,6 +51,22 @@ namespace Ciam.Controllers
             var data = await _unitOfWork.Products.GetAll().AsNoTracking().ProjectTo<ProductViewModel>(_mapper.ConfigurationProvider).ToDataSourceResultAsync(request);
 
             return Json(data);
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetProductList()
+        {
+            var list = await _unitOfWork.Products.GetAll().Select(x=> new { x.Id, Name = x.Name + " (" + x.ListPrice.ToString() + ")" }).AsNoTracking().ToListAsync();
+
+            return Json(list);
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetProductPrice(int? id)
+        {
+            var price = await _unitOfWork.Products.GetAll().Where(x=>x.Id == id).Select(x => x.ListPrice).SingleOrDefaultAsync();
+
+            return Json(new { status = true, price = id == null ? (decimal?)null : price });
         }
     }
 }

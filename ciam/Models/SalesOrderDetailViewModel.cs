@@ -29,6 +29,6 @@ namespace Ciam.Models
 
         public virtual SalesOrderViewModel SalesOrder { get; set; }
 
-        public virtual ProductViewModel Product { get; set; }
+        public ProductViewModel Product { get; set; }
     }
 }

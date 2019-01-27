@@ -51,5 +51,13 @@ namespace Ciam.Controllers
 
             return Json(data);
         }
+
+        [HttpGet]
+        public async Task<JsonResult> GetCustomerList()
+        {
+            var list = await _unitOfWork.Customers.GetAll().ProjectTo<CustomerViewModel>(_mapper.ConfigurationProvider).AsNoTracking().ToListAsync();
+
+            return Json(list);
+        }
     }
 }

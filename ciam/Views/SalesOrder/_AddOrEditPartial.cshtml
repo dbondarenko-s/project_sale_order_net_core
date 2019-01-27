@@ -1,0 +1,145 @@
+﻿@using Ciam.Models
+@model Ciam.Models.SalesOrderViewModel
+
+@{ 
+    ViewBag.TitleModal = Model.Id == null ? "Добавить заказ" : "Редактировать заказ";
+}
+
+<script type="text/javascript">
+    $(function () {
+        $("#create_or_edit_sale_order").submit(function (e) {
+            e.preventDefault();
+            $('span[data-valmsg-for="*"]').text("");
+            $.ajax({
+                type: 'POST',
+                url: $(this).attr("action"),
+                data: $(this).find("input,select,textarea").serialize(),
+                success: function (data) {
+                    if (data.status) {
+                        if ($('#GridSalesOrder').data('kendoGrid')) {
+                            $('#GridSalesOrder').data('kendoGrid').dataSource.page(1);
+                        }
+                        new ModalDialog({
+                            modalForm: $("#create_or_edit_sale_order").closest('div.modal')
+                        }).hideDialog();
+                    } else {
+                        DisplayErrors("create_or_edit_sale_order", data.errors);
+                    }
+                },
+                error: function (request) {
+                    console.log(request);
+                }
+            });
+        });
+    })
+
+    function index(dataItem) {
+        var data = $("#SalesOrderDetails").data("kendoGrid").dataSource.data();
+        return data.indexOf(dataItem);
+    }
+
+    function decimalFormat(value) {
+        console.log(value);
+        return value !== null ? value.toString().replace('.', ',') : value;
+    }
+</script>
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title">@ViewBag.TitleModal</h4>
+</div>
+<form id="create_or_edit_sale_order" asp-action="CreateOrEdit" asp-controller="SalesOrder" method="POST" data-ajax="true" class = "form-horizontal">
+    <div class="modal-body">
+        <div data-valmsg-summary="false" class="text-danger validation-summary-errors">
+            <ul></ul>
+        </div>
+        @Html.HiddenFor(x => x.Id)
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.OrderDate, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @Html.Kendo().DateTimePickerFor(x => x.OrderDate).Max(DateTime.Now).HtmlAttributes(new { style = "width:100%;" })
+                        @Html.ValidationMessageFor(model => model.OrderDate, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div  class="form-group">
+                    @Html.LabelFor(model => model.CustomerId, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div id="customer_id_container" class="col-md-8">
+                        @(Html.Kendo().DropDownListFor(m => m.CustomerId)
+                                                              .Filter("contains")
+                                                              .DataTextField("Name")
+                                                              .DataValueField("Id")
+                                                              .NoDataTemplate("Нет данных")
+                                                              .Popup(x => x.AppendTo("#customer_id_container"))
+                                                              .OptionLabel("Выберите клиента")
+                                                              .DataSource(source => source.Read(read => read.Action("GetCustomerList", "Customer")))
+                                                              .HtmlAttributes(new { style = "width:100%;" }))
+                        @Html.ValidationMessageFor(model => model.CustomerId, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div id="status_id_container" class="form-group">
+                    @Html.LabelFor(model => model.StatusId, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @(Html.Kendo().DropDownListFor(m => m.StatusId)
+                                                              .Filter("contains")
+                                                              .DataTextField("Name")
+                                                              .DataValueField("Id")
+                                                              .NoDataTemplate("Нет данных")
+                                                              .Popup(x => x.AppendTo("#status_id_container"))
+                                                              .OptionLabel("Выберите статус")
+                                                              .DataSource(source => source.Read(read => read.Action("GetStatusList", "SalesStatus")))
+                                                              .HtmlAttributes(new { style = "width:100%;" }))
+                        @Html.ValidationMessageFor(model => model.StatusId, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Comment, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @Html.TextAreaFor(x => x.Comment, htmlAttributes: new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Comment, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-12">
+                @(Html.Kendo().Grid<SalesOrderDetailViewModel>().Name("SalesOrderDetails").ToolBar(tools => tools.Create().Text("Добавить"))
+                      .Editable(editable => editable.Mode(GridEditMode.InLine).DisplayDeleteConfirmation(false))
+                      .Columns(columns =>
+                      {
+                          columns.Command(x => x.Edit());
+                          //columns.Bound(x => x.Id).ClientTemplate("<input type='hidden' name='SalesOrderDetails[#= index(data)#].Id' value='#=Id#' />").Hidden();
+                          //columns.Bound(x => x.SalesOrderId).ClientTemplate("<input type='hidden' name='SalesOrderDetails[#= index(data)#].SalesOrderId' value='#=SalesOrderId#' />").Hidden();
+                          columns.ForeignKey(x => x.ProductId, (System.Collections.IEnumerable)ViewData["Products"], "Id", "Name");
+                          //columns.Bound(x => x.Product).ClientTemplate("#=Product.Name# <input type='hidden' name='SalesOrderDetails[#= index(data)#].Product.Id' value='#=Product.Id#' />");
+                          //columns.Bound(x => x.OrderQty).ClientTemplate("#= OrderQty # <input type='hidden' name='SalesOrderDetails[#= index(data)#].OrderQty' value='#= OrderQty #' />");
+                          //columns.Bound(x => x.UnitPrice).Format("{0:n6}").ClientTemplate("#= UnitPrice == null ? \"\" : UnitPrice # <input type='hidden' name='SalesOrderDetails[#= index(data)#].UnitPrice' value='#=decimalFormat(UnitPrice)#' />").Title("Цена");
+                          //columns.Bound(x => x.ModifyDate).ClientTemplate("#= ModifyDate != null ? kendo.toString(ModifyDate,'dd.MM.yyyy HH:mm') : '' #" +
+                          //                    "<input type='hidden' name='SalesOrderDetails[#= index(data)#].ModifyDate' value='#= ModifyDate != null ? kendo.toString(ModifyDate,'dd.MM.yyyy HH:mm') : '' #' />");
+                      })
+                       .HtmlAttributes(new { style = "height:250px; width:100%;" })
+                       .DataSource(dataSource => dataSource.Ajax().Batch(true)
+                       .Model(model =>
+                       {
+                           model.Id(p => p.Id);
+                           //model.Field(p => p.Product).DefaultValue(ViewData["DefaultProductType"] as ProductViewModel);
+                           model.Field(p => p.OrderQty).DefaultValue(1);
+                           model.Field(p => p.ProductId).DefaultValue(null);
+                           model.Field(p => p.ModifyDate).DefaultValue(DateTime.Now);
+                           model.Field(p => p.UnitPrice).DefaultValue(null);
+                           model.Field(p => p.Id).DefaultValue(0);
+                           model.Field(p => p.SalesOrderId).DefaultValue(0);
+                       })
+                       .ServerOperation(false))
+                )
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Отменить</button>
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+    </div>
+</form>

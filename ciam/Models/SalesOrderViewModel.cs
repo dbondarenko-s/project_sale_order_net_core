@@ -1,10 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Ciam.Models
 {
     public class SalesOrderViewModel
     {
+        public SalesOrderViewModel()
+        {
+            SalesOrderDetails = new HashSet<SalesOrderDetailViewModel>();
+        }
+
         public int? Id { get; set; }
 
         [Display(Name = "Дата заказа")]
@@ -22,6 +28,8 @@ namespace Ciam.Models
         [Display(Name = "Комментарий")]
         [MaxLength(2000, ErrorMessage = "Максимальная длина поля \"{0}\" равна {1} символов")]
         public string Comment { get; set; }
+
+        public virtual ICollection<SalesOrderDetailViewModel> SalesOrderDetails { get; set; }
 
         public virtual SalesStatusViewModel SalesStatus { get; set; }
 

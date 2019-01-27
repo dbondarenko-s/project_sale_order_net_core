@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -45,5 +46,7 @@ namespace Ciam.DAL.Entities
 
         [ForeignKey("CustomerId")]
         public virtual Customer Customer { get; set; }
+
+        public virtual ICollection<SalesOrderDetail> SalesOrderDetails { get; set; }
     }
 }

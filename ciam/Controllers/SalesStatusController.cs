@@ -55,5 +55,13 @@ namespace Ciam.Controllers
 
             return Json(data);
         }
+
+        [HttpGet]
+        public async Task<JsonResult> GetStatusList()
+        {
+            var list = await _unitOfWork.SalesStatuses.GetAll().ProjectTo<SalesStatusViewModel>(_mapper.ConfigurationProvider).AsNoTracking().ToListAsync();
+
+            return Json(list);
+        }
     }
 }

@@ -1,0 +1,125 @@
+﻿@using Ciam.Models
+@model SalesOrderViewModel
+@{
+    ViewData["Title"] = Model.Id == null ? "Добавить заказ" : "Редактировать заказ";
+}
+
+@section Scripts{
+    <script type="text/javascript">
+        var modal;
+
+        $(document).ready(function () {
+            modal = new ModalDialog({
+                modalForm: $('#modal_520')
+            });
+
+            $('#btn_add_position').on('click', function () {
+                showModal520('@Url.Action("_AddOrEditPartial", "SalesOrderDetail", new {Area = ""})');
+            });
+        });
+
+        function showModal520(url, id) {
+            $.ajax({
+                type: "GET",
+                url: url,
+                data: {salesOrderId: '@Model.Id', id: id},
+                success: function (data) {
+                    modal.setHtmlData(data);
+                    modal.showDialog();
+                },
+                error: function (request) {
+                    modal.hideDialog();
+                    console.log(request);
+                }
+            });
+        }
+    </script>
+}
+
+<div class="main-page">
+    <h1>@ViewData["Title"]</h1>
+    @using (Html.BeginForm("CreateOrEdit", "SalesOrder", new { area = "" }, FormMethod.Post, null, new { @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(x => x.Id)
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.OrderDate, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @Html.Kendo().DateTimePickerFor(x => x.OrderDate).Max(DateTime.Now).HtmlAttributes(new { style = "width:100%;" })
+                        @Html.ValidationMessageFor(model => model.OrderDate, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerId, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div id="customer_id_container" class="col-md-8">
+                        @(Html.Kendo().DropDownListFor(m => m.CustomerId).Filter("contains")
+                                              .DataTextField("Name")
+                                              .DataValueField("Id")
+                                              .NoDataTemplate("Нет данных")
+                                              .DataSource(source => source.Read(read => read.Action("GetCustomerList", "Customer")))
+                                              .HtmlAttributes(new { style = "width:100%;" }))
+                        @Html.ValidationMessageFor(model => model.CustomerId, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div id="status_id_container" class="form-group">
+                    @Html.LabelFor(model => model.StatusId, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @(Html.Kendo().DropDownListFor(m => m.StatusId).Filter("contains")
+                                              .DataTextField("Name")
+                                              .DataValueField("Id")
+                                              .NoDataTemplate("Нет данных")
+                                              .DataSource(source => source.Read(read => read.Action("GetStatusList", "SalesStatus")))
+                                              .HtmlAttributes(new { style = "width:100%;" }))
+                        @Html.ValidationMessageFor(model => model.StatusId, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Comment, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @Html.TextAreaFor(x => x.Comment, htmlAttributes: new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Comment, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+            @if (Model.Id != null)
+            {
+                <button id="btn_add_position" type="button" class="btn btn-default">Добавить позицию</button>
+            }
+        </div>
+    }
+    <div class="row">
+        <div class="col-md-12">
+            <div class="sales-detail-grid">
+                @(Html.Kendo().Grid<SalesOrderDetailViewModel>()
+                                  .Name("GridSalesOrderDetail")
+                                  .Columns(c =>
+                                  {
+                                      c.Bound(b => b.Id).Hidden();
+                                      c.Bound(b => b.ModifyDate).Format("{0:dd.MM.yyyy HH:mm}").Width(175);
+                                      c.Bound(b => b.Product.Name);
+                                      c.Bound(b => b.OrderQty).Width(150);
+                                      c.Bound(b => b.UnitPrice);
+                                      c.Bound(b => b.Id).ClientTemplate("<a onclick='showModal520(\""+ Url.Action("_AddOrEditPartial", "SalesOrderDetail", new { Area = "" }) + "\",#=Id#)'>Редактировать</a>").Width(150).Sortable(false).Title(" ");
+                                  })
+                                   .Pageable(pager => pager.Refresh(true).PageSizes(new int[] { 10, 15, 20 }))
+                                   .Sortable()
+                                   .Scrollable()
+                                   .HtmlAttributes(new { style = "height:550px;" })
+                                   .DataSource(ds => ds.Ajax()
+                                        .PageSize(15)
+                                        .Read(read => read.Action("GetData", "SalesOrderDetail", new { area = "", id = Model.Id }))
+                                        .Sort(sort => sort.Add(x => x.ModifyDate).Descending()))
+                )
+            </div>
+        </div>
+    </div>
+</div>
+
